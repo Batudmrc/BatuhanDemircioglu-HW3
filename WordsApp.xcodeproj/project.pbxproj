@@ -13,6 +13,9 @@
 		3B1273BC2A20BEF400154FD1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B1273BA2A20BEF400154FD1 /* Main.storyboard */; };
 		3B1273BE2A20BEF500154FD1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B1273BD2A20BEF500154FD1 /* Assets.xcassets */; };
 		3B1273C12A20BEF500154FD1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B1273BF2A20BEF500154FD1 /* LaunchScreen.storyboard */; };
+		3B1273D12A20C92B00154FD1 /* NetworkPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 3B1273D02A20C92B00154FD1 /* NetworkPackage */; };
+		3B1273D32A20CA5500154FD1 /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1273D22A20CA5500154FD1 /* Word.swift */; };
+		3B1273D52A20CF8E00154FD1 /* Synonym.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1273D42A20CF8E00154FD1 /* Synonym.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		3B1273BD2A20BEF500154FD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B1273C02A20BEF500154FD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B1273C22A20BEF500154FD1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3B1273CE2A20C2ED00154FD1 /* NetworkPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NetworkPackage; sourceTree = "<group>"; };
+		3B1273D22A20CA5500154FD1 /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
+		3B1273D42A20CF8E00154FD1 /* Synonym.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synonym.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B1273D12A20C92B00154FD1 /* NetworkPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,8 +47,10 @@
 		3B1273A82A20BEF400154FD1 = {
 			isa = PBXGroup;
 			children = (
+				3B1273CE2A20C2ED00154FD1 /* NetworkPackage */,
 				3B1273B32A20BEF400154FD1 /* WordsApp */,
 				3B1273B22A20BEF400154FD1 /* Products */,
+				3B1273CF2A20C92B00154FD1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,6 +90,8 @@
 		3B1273C92A20C00700154FD1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3B1273D22A20CA5500154FD1 /* Word.swift */,
+				3B1273D42A20CF8E00154FD1 /* Synonym.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -115,6 +126,13 @@
 			path = DetailPage;
 			sourceTree = "<group>";
 		};
+		3B1273CF2A20C92B00154FD1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -131,6 +149,9 @@
 			dependencies = (
 			);
 			name = WordsApp;
+			packageProductDependencies = (
+				3B1273D02A20C92B00154FD1 /* NetworkPackage */,
+			);
 			productName = WordsApp;
 			productReference = 3B1273B12A20BEF400154FD1 /* WordsApp.app */;
 			productType = "com.apple.product-type.application";
@@ -187,6 +208,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B1273B92A20BEF400154FD1 /* ViewController.swift in Sources */,
+				3B1273D32A20CA5500154FD1 /* Word.swift in Sources */,
+				3B1273D52A20CF8E00154FD1 /* Synonym.swift in Sources */,
 				3B1273B52A20BEF400154FD1 /* AppDelegate.swift in Sources */,
 				3B1273B72A20BEF400154FD1 /* SceneDelegate.swift in Sources */,
 			);
@@ -412,6 +435,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3B1273D02A20C92B00154FD1 /* NetworkPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3B1273A92A20BEF400154FD1 /* Project object */;
 }
