@@ -89,15 +89,12 @@ public typealias Word = [WordElement]
 
 // MARK: - Encode/decode helpers
 
-public class JSONNull: Codable, Hashable {
+public class JSONNull: Codable {
 
     public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
         return true
     }
 
-    public var hashValue: Int {
-        return 0
-    }
 
     public init() {}
 
