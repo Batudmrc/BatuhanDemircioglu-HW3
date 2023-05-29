@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="202" id="KGk-i7-Jjw" customClass="MeaningsTableViewCell" customModule="WordsApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="384" height="202"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="384" height="202"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="H09-sc-5Ks">
+                        <rect key="frame" x="20" y="16" width="344" height="170"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="Qoy-ip-vTf">
+                                <rect key="frame" x="0.0" y="0.0" width="84" height="27.666666666666668"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nRE-Uh-OEn">
+                                        <rect key="frame" x="0.0" y="0.0" width="13.333333333333334" height="27.666666666666668"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MZf-f1-Xcf">
+                                        <rect key="frame" x="16.333333333333336" y="0.0" width="10.333333333333336" height="27.666666666666668"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Noun" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k5r-e3-tab">
+                                        <rect key="frame" x="29.666666666666661" y="0.0" width="54.333333333333343" height="27.666666666666668"/>
+                                        <fontDescription key="fontDescription" type="italicSystem" pointSize="23"/>
+                                        <color key="textColor" systemColor="linkColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Of or pertaining to one’s dwelling or country; domestic; not foreign; as home manufactures; home comforts." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DG1-bT-YWp">
+                                <rect key="frame" x="0.0" y="43.666666666666657" width="318.66666666666669" height="54"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="pgL-4D-DIt">
+                                <rect key="frame" x="0.0" y="113.66666666666664" width="330.33333333333331" height="56.333333333333329"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3i-5o-bP3">
+                                        <rect key="frame" x="0.0" y="0.0" width="64.666666666666671" height="20.333333333333332"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="The missile was able to home in on the target uzun bir text hesabii" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gO0-yf-nTU">
+                                        <rect key="frame" x="0.0" y="28.333333333333343" width="330.33333333333331" height="28"/>
+                                        <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="H09-sc-5Ks" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="PKO-c6-CVv"/>
+                    <constraint firstAttribute="trailing" secondItem="H09-sc-5Ks" secondAttribute="trailing" constant="20" id="Qk9-gT-wZt"/>
+                    <constraint firstItem="H09-sc-5Ks" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="fTQ-EA-IGS"/>
+                    <constraint firstAttribute="bottom" secondItem="H09-sc-5Ks" secondAttribute="bottom" constant="16" id="rNB-TP-H4T"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="categoryLabel" destination="k5r-e3-tab" id="r79-hK-RQw"/>
+                <outlet property="countLabel" destination="nRE-Uh-OEn" id="qv5-fC-N3n"/>
+                <outlet property="exampleLabel" destination="gO0-yf-nTU" id="wHB-GA-whF"/>
+                <outlet property="exampleTitle" destination="Q3i-5o-bP3" id="la2-H9-tGd"/>
+                <outlet property="meaningLabel" destination="DG1-bT-YWp" id="3iw-iV-ayb"/>
+            </connections>
+            <point key="canvasLocation" x="178.62595419847327" y="43.661971830985919"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

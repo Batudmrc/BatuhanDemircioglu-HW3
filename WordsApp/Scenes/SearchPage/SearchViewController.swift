@@ -14,6 +14,7 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchBar: UISearchBar!
     private var originalButtonFrame: CGRect!
+    var searchText: String?
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
@@ -24,7 +25,7 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //fetchWord(word: "cow")
+        
         //fetchSyn(word: "team")
         setupSearchBar()
         
@@ -41,6 +42,10 @@ class SearchViewController: UIViewController {
     }
     
     @IBAction func buttonTapped(_ sender: Any) {
+        guard let text = searchBar.text else {
+            return
+        }
+        searchText = text
         performSegue(withIdentifier: "toDetailVC", sender: nil)
     }
     
@@ -63,7 +68,6 @@ class SearchViewController: UIViewController {
                 paddingView.addSubview(leftView)
             }
         }
-        // Add shadow to the search bar
         searchBar.layer.shadowColor = UIColor.black.cgColor
         searchBar.layer.shadowOffset = CGSize(width: 0, height: 2)
         searchBar.layer.shadowRadius = 4
@@ -99,8 +103,17 @@ class SearchViewController: UIViewController {
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetailVC" {
+            if let destinationVC = segue.destination as? DetailViewController {
+                print("go")
+            }
+        }
+    }
+    
+    
     @objc func keyboardWillHide(notification: Notification) {
-        UIView.animate(withDuration: 2) {
+        UIView.animate(withDuration: 0.2) {
             self.searchButton.frame = self.originalButtonFrame
         }
     }
@@ -111,32 +124,12 @@ class SearchViewController: UIViewController {
     }
     
     
-    func fetchWord(word: String) {
-        NetworkManager.shared.getWord(word: word) { (result: Result<[WordElement], Error>) in
-            switch result {
-            case .success(let word):
-                print("Word API Success: \(String(describing: word[0].word))")
-            case .failure(let error):
-                print("Word API Failure:", error)
-            }
-        }
-    }
     
-    func fetchSyn(word: String) {
-        NetworkManager.shared.getSyn(word: word) { (result: Result<[Synonym], Error>) in
-            switch result {
-            case .success(let syn):
-                print("Synonym API Success:", syn)
-            case .failure(let error):
-                print("Synonym API Failure:", error)
-            }
-        }
-    }
 }
 
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
