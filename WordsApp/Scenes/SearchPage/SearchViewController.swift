@@ -26,7 +26,6 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //fetchSyn(word: "team")
         setupSearchBar()
         
         tableView.register(UINib(nibName: RecentSearchTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
@@ -35,20 +34,20 @@ class SearchViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.reloadData()
-        
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @IBAction func buttonTapped(_ sender: Any) {
-        guard let text = searchBar.text else {
+        guard let text = searchBar.text, !text.isEmpty else {
+            // Search text is empty, show an error message to the user
+            let alert = UIAlertController(title: "Empty Search", message: "Please enter a word to search.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
             return
         }
+        
         searchText = text
         performSegue(withIdentifier: "toDetailVC", sender: nil)
     }
-    
     
     func setupSearchBar() {
         originalButtonFrame = searchButton.frame
@@ -84,52 +83,20 @@ class SearchViewController: UIViewController {
         }
     }
     
-    @objc func keyboardWillShow(notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let buttonFrame = view.convert(searchButton.frame, from: searchButton.superview)
-            let buttonBottom = buttonFrame.origin.y + buttonFrame.size.height
-            
-            let keyboardHeight = keyboardSize.height
-            let viewHeight = view.frame.size.height
-            
-            let offsetY = buttonBottom - (viewHeight - keyboardHeight)
-            
-            if offsetY > 0 {
-                UIView.animate(withDuration: 0.3) {
-                    self.searchButton.frame.origin.y -= offsetY
-                    self.tableView.contentOffset.y += offsetY // Scroll the table view to keep the button visible
-                }
-            }
-        }
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetailVC" {
             if let destinationVC = segue.destination as? DetailViewController {
+                destinationVC.word = searchText
                 print("go")
             }
         }
     }
-    
-    
-    @objc func keyboardWillHide(notification: Notification) {
-        UIView.animate(withDuration: 0.2) {
-            self.searchButton.frame = self.originalButtonFrame
-        }
-    }
-    
-    deinit {
-        // Unregister from keyboard notifications
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    
-    
 }
 
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -138,14 +105,24 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
         }
         let word = "Aarhus" // Replace with actual data
         cell.setup(word: word)
-        
         return cell
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50  // Set the desired height for each cell
     }
+    
+    func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            // Check if the replacement text contains any whitespace
+            let containsWhitespace = text.rangeOfCharacter(from: .whitespaces) != nil
+            
+            // If the replacement text contains whitespace, prevent it from being entered
+            if containsWhitespace {
+                return false
+            }
+            
+            return true
+        }
     
 }
 

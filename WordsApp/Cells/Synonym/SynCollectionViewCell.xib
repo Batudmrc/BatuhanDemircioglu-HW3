@@ -47,6 +47,7 @@
             <size key="customSize" width="81" height="106"/>
             <connections>
                 <outlet property="cardView" destination="ZvG-Sv-a84" id="DXO-A5-NRR"/>
+                <outlet property="synLabel" destination="d2H-9k-BMc" id="OQ3-pC-6Zg"/>
             </connections>
             <point key="canvasLocation" x="345.03816793893128" y="-11.971830985915494"/>
         </collectionViewCell>

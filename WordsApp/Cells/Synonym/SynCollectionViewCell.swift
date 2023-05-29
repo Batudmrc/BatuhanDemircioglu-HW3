@@ -10,6 +10,7 @@ import UIKit
 class SynCollectionViewCell: UICollectionViewCell {
 
     
+    @IBOutlet weak var synLabel: UILabel!
     @IBOutlet weak var cardView: UIView!
     static let identifier = String(describing: SynCollectionViewCell.self)
     
