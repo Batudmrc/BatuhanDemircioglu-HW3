@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import NetworkPackage
 
 class SearchViewController: UIViewController {
     
@@ -14,7 +13,10 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchBar: UISearchBar!
     private var originalButtonFrame: CGRect!
+    let activityIndicator = UIActivityIndicatorView(style: .large)
     var searchText: String?
+    
+    var viewModel: SearchViewModelProtocol = SearchViewModel()
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
@@ -25,9 +27,23 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        viewModel.delegate = self
+        setupTableView()
         setupSearchBar()
-        
+    }
+    
+    @IBAction func buttonTapped(_ sender: Any) {
+        guard let text = searchBar.text, !text.isEmpty else {
+            // Search text is empty, show an error message to the user
+            viewModel.delegate?.showErrorMessage(title: "Empty Search", message: "Please enter a word to search.")
+            return
+        }
+        searchText = text
+        viewModel.checkData(word: text)
+    }
+    
+    
+    func setupTableView() {
         tableView.register(UINib(nibName: RecentSearchTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
@@ -36,18 +52,6 @@ class SearchViewController: UIViewController {
         tableView.reloadData()
     }
     
-    @IBAction func buttonTapped(_ sender: Any) {
-        guard let text = searchBar.text, !text.isEmpty else {
-            // Search text is empty, show an error message to the user
-            let alert = UIAlertController(title: "Empty Search", message: "Please enter a word to search.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
-            return
-        }
-        
-        searchText = text
-        performSegue(withIdentifier: "toDetailVC", sender: nil)
-    }
     
     func setupSearchBar() {
         originalButtonFrame = searchButton.frame
@@ -96,7 +100,7 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return viewModel.numberOfItemsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,17 +117,44 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
     }
     
     func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-            // Check if the replacement text contains any whitespace
-            let containsWhitespace = text.rangeOfCharacter(from: .whitespaces) != nil
-            
-            // If the replacement text contains whitespace, prevent it from being entered
-            if containsWhitespace {
-                return false
-            }
-            
-            return true
+        // Check if the replacement text contains any whitespace
+        let containsWhitespace = text.rangeOfCharacter(from: .whitespaces) != nil
+        if containsWhitespace {
+            return false
         }
+        return true
+    }
+}
+
+extension SearchViewController: SearchViewModelDelegate {
+    func reloadData() {
+        tableView.reloadData()
+    }
     
+    func showErrorMessage(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func navigateToDetailScreen() {
+        performSegue(withIdentifier: "toDetailVC", sender: nil)
+    }
+    
+    func showLoading() {
+        activityIndicator.alpha = 0.0 // Set initial alpha to 0.0
+        self.activityIndicator.center = self.view.center
+        UIView.animate(withDuration: 0.3) {
+            self.activityIndicator.alpha = 1.0
+        }
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+    }
+    
+    func hideLoading() {
+        activityIndicator.stopAnimating()
+        activityIndicator.removeFromSuperview()
+    }
 }
 
 

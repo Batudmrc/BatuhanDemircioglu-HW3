@@ -18,9 +18,7 @@ class MeaningsTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        //exampleTitle.isHidden = true
-        //exampleLabel.isHidden = true
-        // Initialization code
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

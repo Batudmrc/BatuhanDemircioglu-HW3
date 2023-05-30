@@ -20,6 +20,8 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var adverbButton: UIButton!
+    let spinner = UIActivityIndicatorView(style: .large)
+    var spinnerBackgroundView: UIView = UIView()
     var word: String?
     var selectedFilter: String?
     var nounArray: [Definition] = []
@@ -28,7 +30,7 @@ class DetailViewController: UIViewController {
     var adverbArray: [Definition] = []
     var combinedArray: [Definition] = []
     var wordArray: [WordElement]?
-    var synArray: [Synonym]?
+    var synArray: [Synonym] = []
     var sections: [String] = ["Noun", "Verb", "Adjective", "Adverb"]
     var isDataLoaded: Bool = false
     var audioPlayer: AVPlayer?
@@ -45,6 +47,7 @@ class DetailViewController: UIViewController {
         setupButtons()
         setupTableView()
         setupCollectionView()
+        setupSpinner()
         
     }
     
@@ -59,10 +62,7 @@ class DetailViewController: UIViewController {
             pronounceImage.isHidden = true
             return
         }
-        
         var audioURL: URL?
-        
-        // Look for a valid pronunciation URL in different indices of phonetics
         for phonetic in wordArray[0].phonetics ?? [] {
             if let audioURLString = phonetic.audio,
                let url = URL(string: audioURLString) {
@@ -71,27 +71,18 @@ class DetailViewController: UIViewController {
                 break
             }
         }
-        
-        // Check if a valid audio URL was found
         if audioURL != nil {
-            // Valid audio URL found, show the phoneticsImageView
             pronounceImage.isHidden = false
         } else {
-            // No valid audio URL found, hide the phoneticsImageView
             pronounceImage.isHidden = true
         }
     }
     
-    
     func playPronunciationAudio() {
-        // Check if the wordArray contains data
         guard let wordArray = wordArray else {
             return
         }
-        
         var audioURL: URL?
-        
-        // Look for a valid pronunciation URL in different indices of phonetics
         for phonetic in wordArray[0].phonetics ?? [] {
             if let audioURLString = phonetic.audio,
                let url = URL(string: audioURLString) {
@@ -100,19 +91,14 @@ class DetailViewController: UIViewController {
             }
         }
         
-        // Check if a valid audio URL was found
         if let finalAudioURL = audioURL {
-            // Create an AVPlayer with the audio URL
             let playerItem = AVPlayerItem(url: finalAudioURL)
             audioPlayer = AVPlayer(playerItem: playerItem)
             audioPlayer?.play()
         } else {
-            // No valid audio URL found, hide the phoneticsImageView
             pronounceImage.isHidden = true
         }
     }
-    
-    
     
     @IBAction func nounTapped(_ sender: Any) {
         print("abc")
@@ -141,7 +127,6 @@ class DetailViewController: UIViewController {
         } else {
             selectedFilter = filter
         }
-        
         
         UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
@@ -174,8 +159,39 @@ class DetailViewController: UIViewController {
         updateButtonStates()
     }
     
+    func setupSpinner() {
+        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Apply a blur effect to the background
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = spinnerBackgroundView.bounds
+        spinnerBackgroundView.addSubview(blurView)
+        
+        view.addSubview(spinnerBackgroundView)
+        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = UIColor.white
+        spinner.startAnimating()
+        spinnerBackgroundView.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
+    }
+
+    
     func fetchWord(word: String) {
+        DispatchQueue.main.async {
+            self.setupSpinner()
+        }
         NetworkManager.shared.getWord(word: word) { [weak self] (result: Result<[WordElement], Error>) in
+            DispatchQueue.main.async {
+                self?.spinner.stopAnimating()
+                self?.spinnerBackgroundView.removeFromSuperview()
+            }
             switch result {
             case .success(let wordArray):
                 self?.wordArray = wordArray
@@ -183,11 +199,17 @@ class DetailViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.wordLabel.text = word.capitalized
                     self?.phoneticLabel.text = wordArray[0].phonetic
-                    self!.onDataLoaded()
+                    self?.onDataLoaded()
                     self?.tableView.reloadData()
                 }
             case .failure(let error):
                 print("Word API Failure:", error)
+                DispatchQueue.main.async {
+                    let errorMessage = "Failed to fetch word. Please try again later."
+                    let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self?.present(alert, animated: true, completion: nil)
+                }
             }
         }
     }
@@ -224,11 +246,7 @@ class DetailViewController: UIViewController {
         let borderWidth: CGFloat = 2.0
         let blackColor = UIColor.black.cgColor
         let blueColor = UIColor.blue.cgColor
-        
-        // Check if the selected button's border color is already blue
         let isAlreadySelected = sender.layer.borderColor == blueColor
-        
-        // Reset all button border colors and widths
         UIView.animate(withDuration: 0.3) {
             self.nounButton.layer.borderColor = blackColor
             self.nounButton.layer.borderWidth = 1.0
@@ -239,8 +257,6 @@ class DetailViewController: UIViewController {
             self.adverbButton.layer.borderColor = blackColor
             self.adverbButton.layer.borderWidth = 1.0
         }
-        
-        // Set the border color and width of the selected button with animation
         UIView.animate(withDuration: 0.3) {
             if isAlreadySelected {
                 sender.layer.borderColor = blackColor
@@ -253,15 +269,29 @@ class DetailViewController: UIViewController {
     }
     
     func fetchSyn(word: String) {
-        NetworkManager.shared.getSyn(word: word) { (result: Result<[Synonym], Error>) in
+        NetworkManager.shared.getSyn(word: word) { [weak self] (result: Result<[Synonym], Error>) in
             switch result {
             case .success(let syn):
                 print("Synonym API Success:", syn)
-                self.synArray = syn
+                self?.synArray = syn
+                DispatchQueue.main.async {
+                    self?.collectionView.reloadData()
+                }
             case .failure(let error):
                 print("Synonym API Failure:", error)
+                DispatchQueue.main.async {
+                    // Display an error message to the user
+                    self!.showAlert("Failed to fetch synonyms. Please try again later.")
+                }
             }
         }
+    }
+    
+    func showAlert(_ message: String) {
+        let errorMessage = message
+        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func setupButtons() {
@@ -300,18 +330,14 @@ class DetailViewController: UIViewController {
         nounButton.isHighlighted = false
         adjButton.isHighlighted = false
         adverbButton.isHighlighted = false
-        
         disableAllButtons()
-        
     }
     
     func updateButtonStates() {
         guard isDataLoaded else {
-            // Data is not yet loaded, disable all buttons
             disableAllButtons()
             return
         }
-        
         nounButton.isEnabled = selectedFilter != "Noun" && !nounArray.isEmpty
         verbButton.isEnabled = selectedFilter != "Verb" && !verbArray.isEmpty
         adjButton.isEnabled = selectedFilter != "Adjective" && !adjArray.isEmpty
@@ -349,12 +375,22 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        if synArray.count <= 5 {
+            return synArray.count
+        } else {
+            return 5
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SynCollectionViewCell.identifier, for: indexPath) as! SynCollectionViewCell
-        //cell.synLabel.text = synArray![indexPath.row].word
+        
+        if indexPath.row < synArray.count {
+            let syn = synArray[indexPath.row]
+            cell.setup(syn: syn.word!)
+        } else {
+            navigationController?.popViewController(animated: true)// Or any other placeholder value
+        }
         return cell
     }
 }
@@ -487,21 +523,16 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             titleLabel.text = sections[section]
         }
-        
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
         titleLabel.textColor = UIColor.white
-        
         if tableView.numberOfRows(inSection: section) == 0 {
             titleLabel.isHidden = true
         } else {
             titleLabel.isHidden = false
         }
-        
         headerView.addSubview(titleLabel)
         return headerView
     }
-    
-    
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if let filter = selectedFilter {
@@ -515,6 +546,4 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return 40
     }
-    
-    
 }

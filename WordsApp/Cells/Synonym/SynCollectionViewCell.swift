@@ -23,4 +23,8 @@ class SynCollectionViewCell: UICollectionViewCell {
         cardView.layer.cornerRadius = 20
 
     }
+    
+    func setup(syn: String) {
+        synLabel.text = syn
+    }
 }
