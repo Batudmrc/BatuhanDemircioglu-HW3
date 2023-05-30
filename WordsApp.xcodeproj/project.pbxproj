@@ -18,6 +18,7 @@
 		3B1273D52A20CF8E00154FD1 /* Synonym.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1273D42A20CF8E00154FD1 /* Synonym.swift */; };
 		3B81BA8C2A249AFD0064CDBE /* MeaningsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B81BA8A2A249AFD0064CDBE /* MeaningsTableViewCell.swift */; };
 		3B81BA8D2A249AFD0064CDBE /* MeaningsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B81BA8B2A249AFD0064CDBE /* MeaningsTableViewCell.xib */; };
+		3B9BEC252A263BA9005B204F /* RecentSearch.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B9BEC232A263BA9005B204F /* RecentSearch.xcdatamodeld */; };
 		3BC135552A256F7B0068BD28 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC135542A256F7B0068BD28 /* SearchViewModel.swift */; };
 		3BD10C712A21FFE800AE715E /* RecentSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD10C6F2A21FFE800AE715E /* RecentSearchTableViewCell.swift */; };
 		3BD10C722A21FFE800AE715E /* RecentSearchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BD10C702A21FFE800AE715E /* RecentSearchTableViewCell.xib */; };
@@ -40,6 +41,7 @@
 		3B1273D42A20CF8E00154FD1 /* Synonym.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synonym.swift; sourceTree = "<group>"; };
 		3B81BA8A2A249AFD0064CDBE /* MeaningsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeaningsTableViewCell.swift; sourceTree = "<group>"; };
 		3B81BA8B2A249AFD0064CDBE /* MeaningsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MeaningsTableViewCell.xib; sourceTree = "<group>"; };
+		3B9BEC242A263BA9005B204F /* RecentSearch.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecentSearch.xcdatamodel; sourceTree = "<group>"; };
 		3BC135542A256F7B0068BD28 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		3BD10C6F2A21FFE800AE715E /* RecentSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchTableViewCell.swift; sourceTree = "<group>"; };
 		3BD10C702A21FFE800AE715E /* RecentSearchTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecentSearchTableViewCell.xib; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				3B1273B62A20BEF400154FD1 /* SceneDelegate.swift */,
 				3B1273BD2A20BEF500154FD1 /* Assets.xcassets */,
 				3B1273C22A20BEF500154FD1 /* Info.plist */,
+				3B9BEC232A263BA9005B204F /* RecentSearch.xcdatamodeld */,
 			);
 			path = WordsApp;
 			sourceTree = "<group>";
@@ -266,6 +269,7 @@
 				3B1273B52A20BEF400154FD1 /* AppDelegate.swift in Sources */,
 				3BC135552A256F7B0068BD28 /* SearchViewModel.swift in Sources */,
 				3B1273B72A20BEF400154FD1 /* SceneDelegate.swift in Sources */,
+				3B9BEC252A263BA9005B204F /* RecentSearch.xcdatamodeld in Sources */,
 				3BDAA4692A22147900B66847 /* DetailViewController.swift in Sources */,
 				3B81BA8C2A249AFD0064CDBE /* MeaningsTableViewCell.swift in Sources */,
 			);
@@ -498,6 +502,19 @@
 			productName = NetworkPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		3B9BEC232A263BA9005B204F /* RecentSearch.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3B9BEC242A263BA9005B204F /* RecentSearch.xcdatamodel */,
+			);
+			currentVersion = 3B9BEC242A263BA9005B204F /* RecentSearch.xcdatamodel */;
+			path = RecentSearch.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3B1273A92A20BEF400154FD1 /* Project object */;
 }

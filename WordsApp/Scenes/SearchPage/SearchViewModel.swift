@@ -26,6 +26,7 @@ protocol SearchViewModelDelegate: AnyObject {
 final class SearchViewModel {
     
     weak var delegate: SearchViewModelDelegate?
+    var service: NetworkManagerProtocol?
     
     func checkWrittenWord(word: String) {
         self.delegate?.showLoading()
