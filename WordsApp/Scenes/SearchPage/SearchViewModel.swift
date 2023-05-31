@@ -7,12 +7,15 @@
 
 import Foundation
 import NetworkPackage
-
+import CoreData
 
 protocol SearchViewModelProtocol {
     var delegate: SearchViewModelDelegate? { get set }
     func checkData(word: String)
     func numberOfItemsInSection(_ section: Int) -> Int
+    func saveHistory(word: String, context: NSManagedObjectContext)
+    func getSearchHistory() -> [History]
+    func loadHistory(context: NSManagedObjectContext)
 }
 
 protocol SearchViewModelDelegate: AnyObject {
@@ -21,12 +24,14 @@ protocol SearchViewModelDelegate: AnyObject {
     func navigateToDetailScreen()
     func showLoading()
     func hideLoading()
+    
 }
 
 final class SearchViewModel {
-    
     weak var delegate: SearchViewModelDelegate?
     var service: NetworkManagerProtocol?
+    var context: NSManagedObjectContext?
+    private var searchHistory: [History] = []
     
     func checkWrittenWord(word: String) {
         self.delegate?.showLoading()
@@ -50,8 +55,38 @@ final class SearchViewModel {
 }
 
 extension SearchViewModel: SearchViewModelProtocol {
+    func loadHistory(context: NSManagedObjectContext) {
+        let request: NSFetchRequest<History> = History.fetchRequest()
+        do {
+            searchHistory = try context.fetch(request)
+            //tableView.reloadData()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func getSearchHistory() -> [History] {
+        return searchHistory
+    }
+    
+    func saveHistory(word: String, context: NSManagedObjectContext) {
+        let newHistory = History(context: context)
+        newHistory.word = word
+        searchHistory.append(newHistory)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save search history: \(error)")
+        }
+    }
+    
     func numberOfItemsInSection(_ section: Int) -> Int {
-        return 5
+        let uniqueWords = Set(searchHistory.compactMap { $0.word })
+        if uniqueWords.count > 5 {
+            return 5
+        } else {
+            return uniqueWords.count
+        }
     }
     
     func checkData(word: String) {

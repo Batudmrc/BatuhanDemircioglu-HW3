@@ -48,6 +48,7 @@ class DetailViewController: UIViewController {
         setupTableView()
         setupCollectionView()
         setupSpinner()
+        updatePhoneticsImageViewVisibility()
     }
     
     @objc func phoneticImageTapped() {
@@ -56,26 +57,28 @@ class DetailViewController: UIViewController {
     }
     
     func updatePhoneticsImageViewVisibility() {
+        // Hide the pronounceImage by default
+        pronounceImage.isHidden = false
+
         // Check if the wordArray contains data
         guard let wordArray = wordArray else {
-            pronounceImage.isHidden = true
             return
         }
+
         var audioURL: URL?
         for phonetic in wordArray[0].phonetics ?? [] {
             if let audioURLString = phonetic.audio,
                let url = URL(string: audioURLString) {
                 audioURL = url
-                pronounceImage.isHidden = false
                 break
             }
         }
+
         if audioURL != nil {
             pronounceImage.isHidden = false
-        } else {
-            pronounceImage.isHidden = true
         }
     }
+
     
     func playPronunciationAudio() {
         guard let wordArray = wordArray else {
@@ -340,24 +343,12 @@ class DetailViewController: UIViewController {
         verbButton.isEnabled = selectedFilter != "Verb" && !verbArray.isEmpty
         adjButton.isEnabled = selectedFilter != "Adjective" && !adjArray.isEmpty
         adverbButton.isEnabled = selectedFilter != "Adverb" && !adverbArray.isEmpty
-        
-        // Update button appearance based on enabled/disabled state
-        //updateButtonAppearance(nounButton)
-        //updateButtonAppearance(verbButton)
-        //updateButtonAppearance(adjButton)
-        //updateButtonAppearance(adverbButton)
     }
     func disableAllButtons() {
         nounButton.isEnabled = false
         verbButton.isEnabled = false
         adjButton.isEnabled = false
         adverbButton.isEnabled = false
-        
-        // Update button appearance for all buttons
-        //updateButtonAppearance(nounButton)
-        //updateButtonAppearance(verbButton)
-        //updateButtonAppearance(adjButton)
-        //updateButtonAppearance(adverbButton)
     }
     
     func updateButtonAppearance(_ button: UIButton) {
