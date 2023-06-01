@@ -31,6 +31,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        searchBar.resignFirstResponder()
         if let cell = tableView.cellForRow(at: indexPath) as? RecentSearchTableViewCell {
             if viewModel.isConnected() {
                 let text = cell.searchLabel.text

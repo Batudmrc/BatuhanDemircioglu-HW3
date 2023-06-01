@@ -68,7 +68,6 @@ final class DetailViewModel {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: wordArray[0].phonetic ?? "no phonetics found")
                     self?.onDataLoaded()
-                    print(word.capitalized)
                     self?.delegate?.reloadTableViewData()
                     self?.delegate?.hideLoading() // Hide loading animation after a slight delay
                 }
@@ -86,7 +85,6 @@ final class DetailViewModel {
         NetworkManager.shared.getSyn(word: word) { [weak self] (result: Result<[Synonym], Error>) in
             switch result {
             case .success(let syn):
-                print("Synonym API Success:", syn)
                 self?.synArray = syn
                 DispatchQueue.main.async {
                     self?.delegate?.reloadCollectionViewData()

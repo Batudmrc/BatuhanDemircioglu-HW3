@@ -70,6 +70,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="lLe-7V-HPh"/>
                     <connections>
+                        <outlet property="bottomConstraint" destination="GPd-Qb-OXt" id="KUd-KS-zEv"/>
                         <outlet property="searchBar" destination="iDL-to-qAg" id="kqA-D0-VeL"/>
                         <outlet property="searchButton" destination="iew-Rj-a0k" id="Iuy-Hp-0MQ"/>
                         <outlet property="tableView" destination="Wg3-NM-DNy" id="F0N-jj-Km9"/>

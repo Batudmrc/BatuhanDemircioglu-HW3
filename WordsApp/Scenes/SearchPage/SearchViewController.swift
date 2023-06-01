@@ -10,6 +10,7 @@ import CoreData
 
 class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -31,12 +32,21 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NetworkUtils.checkConnection(in: self) {
-            NetworkUtils.retryButtonTapped(in: self)
-        }
+        
+        checkConnection()
         viewModel.delegate = self
         setupUI()
         viewModel.loadHistory(context: context)
+        changeObserverStatus()
+        
+        
+    }
+    
+    
+    func checkConnection() {
+        NetworkUtils.checkConnection(in: self) {
+            NetworkUtils.retryButtonTapped(in: self)
+        }
     }
     
     @IBAction func buttonTapped(_ sender: Any) {
@@ -51,7 +61,7 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
         } else {
             viewModel.delegate?.showErrorMessage(title: "Error", message: "Please check your connection")
         }
-        
+        searchBar.resignFirstResponder()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -114,7 +124,6 @@ extension SearchViewController: SearchViewModelDelegate {
             }
         }
     }
-    
 }
 
 
