@@ -23,6 +23,7 @@ extension SearchViewController {
     }
     
     func setupTableView() {
+        tableView.isScrollEnabled = false
         tableView.register(UINib(nibName: RecentSearchTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none

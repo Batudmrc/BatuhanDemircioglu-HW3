@@ -22,10 +22,21 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
             return viewModel.getSearchHistory().reversed()
         }
         cell.searchLabel.text = searchHistory[indexPath.row].word
+        cell.selectionStyle = .none
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50  // Set the desired height for each cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? RecentSearchTableViewCell {
+            let text = cell.searchLabel.text
+            searchText = text
+            viewModel.checkData(word: text!)
+        }
+    }
+
+
 }

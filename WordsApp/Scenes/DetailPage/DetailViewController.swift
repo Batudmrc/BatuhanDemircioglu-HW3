@@ -9,60 +9,8 @@ import UIKit
 import NetworkPackage
 import AVFoundation
 
-class DetailViewController: UIViewController, DetailViewModelDelegate {
-    func showErrorMessage(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func updateLabels(wordText: String, phoneticText: String) {
-        wordLabel.text = wordText
-        phoneticLabel.text = phoneticText
-    }
-    
-    func reloadTableViewData() {
-        UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
-            self.tableView.reloadData()
-        }, completion: nil)
-    }
+class DetailViewController: UIViewController {
 
-    func reloadCollectionViewData() {
-        UIView.transition(with: collectionView, duration: 0.15, options: .transitionCrossDissolve, animations: {
-            self.collectionView.reloadData()
-        }, completion: nil)
-    }
-
-    
-    func showLoading() {
-        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Apply a blur effect to the background
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = spinnerBackgroundView.bounds
-        spinnerBackgroundView.addSubview(blurView)
-        
-        view.addSubview(spinnerBackgroundView)
-        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = UIColor.white
-        spinner.startAnimating()
-        spinnerBackgroundView.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
-    }
-
-    func hideLoading() {
-        self.spinner.stopAnimating()
-        self.spinnerBackgroundView.removeFromSuperview()
-    }
-    
-    
     @IBOutlet weak var pronounceImage: UIImageView!
     @IBOutlet weak var phoneticLabel: UILabel!
     @IBOutlet weak var nounButton: UIButton!
@@ -72,22 +20,11 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var adverbButton: UIButton!
+    
     let spinner = UIActivityIndicatorView(style: .large)
     var spinnerBackgroundView: UIView = UIView()
     var word: String?
-    var selectedFilter: String?
-    var selectedFilters: [String] = []
-    var nounArray: [Definition] = []
-    var verbArray: [Definition] = []
-    var adjArray: [Definition] = []
-    var adverbArray: [Definition] = []
-    var combinedArray: [Definition] = []
-    var wordArray: [WordElement]?
-    var synArray: [Synonym] = []
-    var sections: [String] = ["Noun", "Verb", "Adjective", "Adverb"]
-    var isDataLoaded: Bool = true
-    var audioPlayer: AVPlayer?
-    
+   
     var viewModel: DetailViewModelProtocol = DetailViewModel()
     
     override func viewDidLoad() {
@@ -98,8 +35,6 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
         pronounceImage.addGestureRecognizer(tapGesture)
         viewModel.fetchWordData(word: word!)
         viewModel.fetchSynData(word: word!)
-        //fetchWord(word: word!)
-        //fetchSyn(word: word!)
         setupButtons()
         setupTableView()
         setupCollectionView()
@@ -109,7 +44,6 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
     @objc func phoneticImageTapped() {
         viewModel.playPronunciationAudio()
     }
-
     
     @IBAction func nounTapped(_ sender: Any) {
         updateButtonBorderColor(sender: nounButton)
@@ -130,49 +64,6 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
         updateButtonBorderColor(sender: adverbButton)
         viewModel.toggleFilterSection(filter: "Adverb")
     }
-    /*
-    func toggleFilterSection(filter: String) {
-        if selectedFilters.contains(filter) {
-            selectedFilters.removeAll { $0 == filter }
-        } else {
-            selectedFilters.append(filter)
-        }
-        
-        UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
-            self.tableView.reloadData()
-            
-        }, completion: nil)
-    }*/
-    
-    func onDataLoaded() {
-        isDataLoaded = true
-        updateButtonStates()
-    }
-    
-    func setupSpinner() {
-        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Apply a blur effect to the background
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = spinnerBackgroundView.bounds
-        spinnerBackgroundView.addSubview(blurView)
-        
-        view.addSubview(spinnerBackgroundView)
-        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = UIColor.white
-        spinner.startAnimating()
-        spinnerBackgroundView.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
-    }
-    
-        
     
     func updateButtonBorderColor(sender: UIButton) {
         let isSelected = !viewModel.getSelectedFilters().contains(sender.titleLabel?.text ?? "")
@@ -194,7 +85,6 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
         adjButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adjective") == nil && !viewModel.getAdjArray().isEmpty
         adverbButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adverb") == nil && !viewModel.getAdverbArray().isEmpty
     }
-    
     
     func updateButtonAppearance(_ button: UIButton) {
         let isEnabled = button.isEnabled
@@ -264,7 +154,7 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.exampleLabel.text = meaning.example
         }
-        
+        cell.selectionStyle = .none
         cell.categoryLabel.text = partOfSpeech
         return cell
     }
@@ -300,5 +190,58 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
             return 40
         }
     }
+}
+
+extension DetailViewController: DetailViewModelDelegate {
+    func showErrorMessage(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
     
+    func updateLabels(wordText: String, phoneticText: String) {
+        wordLabel.text = wordText
+        phoneticLabel.text = phoneticText
+    }
+    
+    func reloadTableViewData() {
+        UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+            self.tableView.reloadData()
+        }, completion: nil)
+    }
+
+    func reloadCollectionViewData() {
+        UIView.transition(with: collectionView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+            self.collectionView.reloadData()
+        }, completion: nil)
+    }
+
+    
+    func showLoading() {
+        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Apply a blur effect to the background
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = spinnerBackgroundView.bounds
+        spinnerBackgroundView.addSubview(blurView)
+        
+        view.addSubview(spinnerBackgroundView)
+        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = UIColor.white
+        spinner.startAnimating()
+        spinnerBackgroundView.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
+    }
+
+    func hideLoading() {
+        self.spinner.stopAnimating()
+        self.spinnerBackgroundView.removeFromSuperview()
+    }
 }

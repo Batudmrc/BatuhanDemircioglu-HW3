@@ -54,4 +54,27 @@ extension DetailViewController {
         adjButton.isEnabled = false
         adverbButton.isEnabled = false
     }
+    
+    func setupSpinner() {
+        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Apply a blur effect to the background
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = spinnerBackgroundView.bounds
+        spinnerBackgroundView.addSubview(blurView)
+        
+        view.addSubview(spinnerBackgroundView)
+        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = UIColor.white
+        spinner.startAnimating()
+        spinnerBackgroundView.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
+    }
 }
