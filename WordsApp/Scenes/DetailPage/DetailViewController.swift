@@ -10,7 +10,7 @@ import NetworkPackage
 import AVFoundation
 
 class DetailViewController: UIViewController {
-
+    
     @IBOutlet weak var pronounceImage: UIImageView!
     @IBOutlet weak var phoneticLabel: UILabel!
     @IBOutlet weak var nounButton: UIButton!
@@ -24,21 +24,34 @@ class DetailViewController: UIViewController {
     let spinner = UIActivityIndicatorView(style: .large)
     var spinnerBackgroundView: UIView = UIView()
     var word: String?
-   
+    
     var viewModel: DetailViewModelProtocol = DetailViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchData()
+        setupUI()
+    }
+    
+    private func fetchData() {
+        guard let word = word else { return }
         viewModel.delegate = self
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(phoneticImageTapped))
-        pronounceImage.isUserInteractionEnabled = true
-        pronounceImage.addGestureRecognizer(tapGesture)
-        viewModel.fetchWordData(word: word!)
-        viewModel.fetchSynData(word: word!)
+        viewModel.fetchWordData(word: word)
+        viewModel.fetchSynData(word: word)
+    }
+    
+    func setupUI() {
+        setupGestures()
         setupButtons()
         setupTableView()
         setupCollectionView()
         setupSpinner()
+    }
+    
+    private func setupGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(phoneticImageTapped))
+        pronounceImage.isUserInteractionEnabled = true
+        pronounceImage.addGestureRecognizer(tapGesture)
     }
     
     @objc func phoneticImageTapped() {
@@ -70,7 +83,7 @@ class DetailViewController: UIViewController {
         
         UIView.animate(withDuration: 0.1, animations: {
             sender.transform = isSelected ? CGAffineTransform(scaleX: 1.05, y: 1.05) : .identity
-            sender.layer.borderColor = isSelected ? UIColor.blue.cgColor : UIColor.black.cgColor
+            sender.layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.black.cgColor
             sender.layer.borderWidth = isSelected ? 2.0 : 1.0
         })
     }
@@ -80,8 +93,9 @@ class DetailViewController: UIViewController {
             disableAllButtons()
             return
         }
-        nounButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Noun") == nil && !viewModel.getNounArray().isEmpty
-        verbButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Verb") == nil && !viewModel.getVerbArray().isEmpty
+        let selectedFilters = viewModel.getSelectedFilters()
+        nounButton.isEnabled = selectedFilters.firstIndex(of: "Noun") == nil && !viewModel.getNounArray().isEmpty
+        verbButton.isEnabled = selectedFilters.firstIndex(of: "Verb") == nil && !viewModel.getVerbArray().isEmpty
         adjButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adjective") == nil && !viewModel.getAdjArray().isEmpty
         adverbButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adverb") == nil && !viewModel.getAdverbArray().isEmpty
     }
@@ -148,15 +162,24 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         let meaning = definitions[indexPath.row]
         cell.meaningLabel.text = meaning.definition
         cell.countLabel.text = String(indexPath.row + 1)
-        if meaning.example == nil {
-            cell.exampleLabel.isHidden = true
-            cell.exampleTitle.isHidden = true
+
+        if viewModel.getSelectedFilters().isEmpty {
+            cell.exampleLabel.isHidden = meaning.example == nil
+            cell.exampleTitle.isHidden = meaning.example == nil
         } else {
-            cell.exampleLabel.text = meaning.example
+            let filter = viewModel.getSelectedFilters()[indexPath.section]
+            let result = viewModel.getDefinitionsForFilter(filter)
+            let definitions = result.definitions
+            let filteredMeaning = definitions.first { $0.definition == meaning.definition }
+            cell.exampleLabel.isHidden = filteredMeaning?.example == nil
+            cell.exampleTitle.isHidden = filteredMeaning?.example == nil
         }
+
+        cell.exampleLabel.text = meaning.example ?? ""
         cell.selectionStyle = .none
         cell.categoryLabel.text = partOfSpeech
         return cell
+
     }
     
     
@@ -172,7 +195,6 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             sectionTitle = viewModel.getSelectedFilters()[section]
         }
-        
         titleLabel.text = sectionTitle
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
         titleLabel.textColor = UIColor.white
@@ -181,7 +203,6 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         headerView.addSubview(titleLabel)
         return headerView
     }
-    
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if tableView.numberOfRows(inSection: section) == 0 {
@@ -205,17 +226,17 @@ extension DetailViewController: DetailViewModelDelegate {
     }
     
     func reloadTableViewData() {
-        UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+        UIView.transition(with: tableView, duration: 0.08, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
         }, completion: nil)
     }
-
+    
     func reloadCollectionViewData() {
-        UIView.transition(with: collectionView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+        UIView.transition(with: collectionView, duration: 0.09, options: .transitionCrossDissolve, animations: {
             self.collectionView.reloadData()
         }, completion: nil)
     }
-
+    
     
     func showLoading() {
         spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -231,17 +252,15 @@ extension DetailViewController: DetailViewModelDelegate {
         spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = UIColor.white
-        spinner.startAnimating()
-        spinnerBackgroundView.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
+    }
+    
+    func hideLoading() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.spinnerBackgroundView.alpha = 0.0
+        }) { (_) in
+            self.spinner.stopAnimating()
+            self.spinnerBackgroundView.removeFromSuperview()
+        }
     }
 
-    func hideLoading() {
-        self.spinner.stopAnimating()
-        self.spinnerBackgroundView.removeFromSuperview()
-    }
 }

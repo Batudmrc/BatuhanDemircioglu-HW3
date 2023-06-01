@@ -82,19 +82,42 @@ extension SearchViewController: SearchViewModelDelegate {
     }
     
     func showLoading() {
-        activityIndicator.alpha = 0.0
-        self.activityIndicator.center = self.view.center
+        let overlayView = UIView(frame: view.bounds)
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.0)
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .white
+        spinner.startAnimating()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        
+        overlayView.addSubview(spinner)
+        view.addSubview(overlayView)
+        
+        NSLayoutConstraint.activate([
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            spinner.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor)
+        ])
+        
         UIView.animate(withDuration: 0.3) {
-            self.activityIndicator.alpha = 1.0
+            overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
         }
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
     }
     
     func hideLoading() {
-        activityIndicator.stopAnimating()
-        activityIndicator.removeFromSuperview()
+        if let overlayView = view.subviews.first(where: { $0.backgroundColor?.isEqual(UIColor.black.withAlphaComponent(0.4)) ?? false }) {
+            UIView.animate(withDuration: 0.3, animations: {
+                overlayView.alpha = 0.0
+            }) { (_) in
+                overlayView.removeFromSuperview()
+            }
+        }
     }
+
 }
 
 

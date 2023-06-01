@@ -24,7 +24,6 @@ protocol SearchViewModelDelegate: AnyObject {
     func navigateToDetailScreen()
     func showLoading()
     func hideLoading()
-    
 }
 
 final class SearchViewModel {
@@ -89,6 +88,7 @@ extension SearchViewModel: SearchViewModelProtocol {
     }
     
     func checkData(word: String) {
+        
         checkWrittenWord(word: word)
     }
 }

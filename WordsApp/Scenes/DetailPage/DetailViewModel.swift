@@ -61,24 +61,22 @@ final class DetailViewModel {
             self.delegate?.showLoading()
         }
         NetworkManager.shared.getWord(word: word) { [weak self] (result: Result<[WordElement], Error>) in
-            DispatchQueue.main.async {
-                self?.delegate?.hideLoading()
-            }
             switch result {
             case .success(let wordArray):
                 self?.wordArray = wordArray
                 self?.processMeanings()
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: wordArray[0].phonetic ?? "no phonetics found")
-                    
-                    self!.onDataLoaded()
+                    self?.onDataLoaded()
                     print(word.capitalized)
                     self?.delegate?.reloadTableViewData()
+                    self?.delegate?.hideLoading() // Hide loading animation after a slight delay
                 }
             case .failure(let error):
                 print("Word API Failure:", error)
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self?.delegate?.showErrorMessage(title: "Error", message: "Failed to fetch word. Please try again later.")
+                    self?.delegate?.hideLoading() // Hide loading animation after a slight delay
                 }
             }
         }
@@ -210,7 +208,6 @@ extension DetailViewModel: DetailViewModelProtocol {
         }
     }
     
-    
     func playPronunciationAudio() {
         guard let wordArray = wordArray else {
             return
@@ -223,7 +220,6 @@ extension DetailViewModel: DetailViewModelProtocol {
                 break
             }
         }
-        
         if let finalAudioURL = audioURL {
             let playerItem = AVPlayerItem(url: finalAudioURL)
             audioPlayer = AVPlayer(playerItem: playerItem)
@@ -232,7 +228,6 @@ extension DetailViewModel: DetailViewModelProtocol {
             self.delegate?.showErrorMessage(title: "Error", message: "No audio file found.")
         }
     }
-    
     
     func fetchWordData(word: String) {
         fetchWord(word: word)
@@ -269,7 +264,5 @@ extension DetailViewModel: DetailViewModelProtocol {
             }
         }
     }
-    
-    
 }
 
