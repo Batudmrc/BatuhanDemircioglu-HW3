@@ -9,7 +9,59 @@ import UIKit
 import NetworkPackage
 import AVFoundation
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, DetailViewModelDelegate {
+    func showErrorMessage(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func updateLabels(wordText: String, phoneticText: String) {
+        wordLabel.text = wordText
+        phoneticLabel.text = phoneticText
+    }
+    
+    func reloadTableViewData() {
+        UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+            self.tableView.reloadData()
+        }, completion: nil)
+    }
+
+    func reloadCollectionViewData() {
+        UIView.transition(with: collectionView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+            self.collectionView.reloadData()
+        }, completion: nil)
+    }
+
+    
+    func showLoading() {
+        spinnerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Apply a blur effect to the background
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = spinnerBackgroundView.bounds
+        spinnerBackgroundView.addSubview(blurView)
+        
+        view.addSubview(spinnerBackgroundView)
+        spinnerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        spinnerBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        spinnerBackgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        spinnerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = UIColor.white
+        spinner.startAnimating()
+        spinnerBackgroundView.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: spinnerBackgroundView.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
+    }
+
+    func hideLoading() {
+        self.spinner.stopAnimating()
+        self.spinnerBackgroundView.removeFromSuperview()
+    }
+    
     
     @IBOutlet weak var pronounceImage: UIImageView!
     @IBOutlet weak var phoneticLabel: UILabel!
@@ -33,96 +85,52 @@ class DetailViewController: UIViewController {
     var wordArray: [WordElement]?
     var synArray: [Synonym] = []
     var sections: [String] = ["Noun", "Verb", "Adjective", "Adverb"]
-    var isDataLoaded: Bool = false
+    var isDataLoaded: Bool = true
     var audioPlayer: AVPlayer?
+    
+    var viewModel: DetailViewModelProtocol = DetailViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        viewModel.delegate = self
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(phoneticImageTapped))
         pronounceImage.isUserInteractionEnabled = true
         pronounceImage.addGestureRecognizer(tapGesture)
-        fetchWord(word: word!)
-        fetchSyn(word: word!)
+        viewModel.fetchWordData(word: word!)
+        viewModel.fetchSynData(word: word!)
+        //fetchWord(word: word!)
+        //fetchSyn(word: word!)
         setupButtons()
         setupTableView()
         setupCollectionView()
         setupSpinner()
-        updatePhoneticsImageViewVisibility()
     }
     
     @objc func phoneticImageTapped() {
-        playPronunciationAudio()
-        print("abc")
-    }
-    
-    func updatePhoneticsImageViewVisibility() {
-        // Hide the pronounceImage by default
-        pronounceImage.isHidden = false
-
-        // Check if the wordArray contains data
-        guard let wordArray = wordArray else {
-            return
-        }
-
-        var audioURL: URL?
-        for phonetic in wordArray[0].phonetics ?? [] {
-            if let audioURLString = phonetic.audio,
-               let url = URL(string: audioURLString) {
-                audioURL = url
-                break
-            }
-        }
-
-        if audioURL != nil {
-            pronounceImage.isHidden = false
-        }
+        viewModel.playPronunciationAudio()
     }
 
-    
-    func playPronunciationAudio() {
-        guard let wordArray = wordArray else {
-            return
-        }
-        var audioURL: URL?
-        for phonetic in wordArray[0].phonetics ?? [] {
-            if let audioURLString = phonetic.audio,
-               let url = URL(string: audioURLString) {
-                audioURL = url
-                break
-            }
-        }
-        
-        if let finalAudioURL = audioURL {
-            let playerItem = AVPlayerItem(url: finalAudioURL)
-            audioPlayer = AVPlayer(playerItem: playerItem)
-            audioPlayer?.play()
-        } else {
-            pronounceImage.isHidden = true
-        }
-    }
     
     @IBAction func nounTapped(_ sender: Any) {
-        print("abc")
         updateButtonBorderColor(sender: nounButton)
-        toggleFilterSection(filter: "Noun")
+        viewModel.toggleFilterSection(filter: "Noun")
     }
     
     @IBAction func verbTapped(_ sender: Any) {
         updateButtonBorderColor(sender: verbButton)
-        toggleFilterSection(filter: "Verb")
+        viewModel.toggleFilterSection(filter: "Verb")
     }
     
     @IBAction func adjTapped(_ sender: Any) {
         updateButtonBorderColor(sender: adjButton)
-        toggleFilterSection(filter: "Adjective")
+        viewModel.toggleFilterSection(filter: "Adjective")
     }
     
     @IBAction func adverbTapped(_ sender: Any) {
         updateButtonBorderColor(sender: adverbButton)
-        toggleFilterSection(filter: "Adverb")
+        viewModel.toggleFilterSection(filter: "Adverb")
     }
-    
+    /*
     func toggleFilterSection(filter: String) {
         if selectedFilters.contains(filter) {
             selectedFilters.removeAll { $0 == filter }
@@ -132,30 +140,10 @@ class DetailViewController: UIViewController {
         
         UIView.transition(with: tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
+            
         }, completion: nil)
-    }
+    }*/
     
-    func setupCollectionView() {
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(UINib(nibName: SynCollectionViewCell.identifier, bundle: nil), forCellWithReuseIdentifier: SynCollectionViewCell.identifier)
-        if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            flowLayout.scrollDirection = .vertical
-            flowLayout.minimumInteritemSpacing = 3
-            flowLayout.minimumLineSpacing = 12
-        }
-    }
-    func setupTableView() {
-        // Automatic resize the cell's height
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 200
-        tableView.register(UINib(nibName: MeaningsTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: MeaningsTableViewCell.identifier)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.showsVerticalScrollIndicator = false
-        
-    }
     func onDataLoaded() {
         isDataLoaded = true
         updateButtonStates()
@@ -184,68 +172,10 @@ class DetailViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: spinnerBackgroundView.centerYAnchor).isActive = true
     }
     
-    
-    func fetchWord(word: String) {
-        DispatchQueue.main.async {
-            self.setupSpinner()
-        }
-        NetworkManager.shared.getWord(word: word) { [weak self] (result: Result<[WordElement], Error>) in
-            DispatchQueue.main.async {
-                self?.spinner.stopAnimating()
-                self?.spinnerBackgroundView.removeFromSuperview()
-            }
-            switch result {
-            case .success(let wordArray):
-                self?.wordArray = wordArray
-                self?.processMeanings()
-                DispatchQueue.main.async {
-                    self?.wordLabel.text = word.capitalized
-                    self?.phoneticLabel.text = wordArray[0].phonetic
-                    self?.onDataLoaded()
-                    self?.tableView.reloadData()
-                }
-            case .failure(let error):
-                print("Word API Failure:", error)
-                DispatchQueue.main.async {
-                    let errorMessage = "Failed to fetch word. Please try again later."
-                    let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self?.present(alert, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
-    func processMeanings() {
-        nounArray.removeAll()
-        verbArray.removeAll()
-        adjArray.removeAll()
-        adverbArray.removeAll()
         
-        for word in wordArray ?? [] {
-            if let meanings = word.meanings {
-                for meaning in meanings {
-                    if let partOfSpeech = meaning.partOfSpeech, let definitions = meaning.definitions {
-                        switch partOfSpeech {
-                        case "noun":
-                            nounArray.append(contentsOf: definitions)
-                        case "verb":
-                            verbArray.append(contentsOf: definitions)
-                        case "adjective":
-                            adjArray.append(contentsOf: definitions)
-                        case "adverb":
-                            adverbArray.append(contentsOf: definitions)
-                        default:
-                            break
-                        }
-                    }
-                }
-            }
-        }
-    }
     
     func updateButtonBorderColor(sender: UIButton) {
-        let isSelected = !selectedFilters.contains(sender.titleLabel?.text ?? "")
+        let isSelected = !viewModel.getSelectedFilters().contains(sender.titleLabel?.text ?? "")
         
         UIView.animate(withDuration: 0.1, animations: {
             sender.transform = isSelected ? CGAffineTransform(scaleX: 1.05, y: 1.05) : .identity
@@ -254,102 +184,17 @@ class DetailViewController: UIViewController {
         })
     }
     
-    func updateButtonAppearance(_ button: UIButton, isSelected: Bool) {
-        let blackColor = UIColor.black.cgColor
-        let blueColor = UIColor.blue.cgColor
-        
-        if isSelected {
-            button.layer.borderColor = blueColor
-            button.layer.borderWidth = 2.0
-        } else {
-            button.layer.borderColor = blackColor
-            button.layer.borderWidth = 1.0
-        }
-    }
-    
-    
-    
-    func fetchSyn(word: String) {
-        NetworkManager.shared.getSyn(word: word) { [weak self] (result: Result<[Synonym], Error>) in
-            switch result {
-            case .success(let syn):
-                print("Synonym API Success:", syn)
-                self?.synArray = syn
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            case .failure(let error):
-                print("Synonym API Failure:", error)
-                DispatchQueue.main.async {
-                    // Display an error message to the user
-                    self!.showAlert("Failed to fetch synonyms. Please try again later.")
-                }
-            }
-        }
-    }
-    
-    func showAlert(_ message: String) {
-        let errorMessage = message
-        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func setupButtons() {
-        let boldFont = UIFont.boldSystemFont(ofSize: 16) // Adjust the font size as needed
-        
-        verbButton.titleLabel?.font = boldFont
-        nounButton.titleLabel?.font = boldFont
-        adjButton.titleLabel?.font = boldFont
-        adverbButton.titleLabel?.font = boldFont
-        
-        verbButton.layer.borderWidth = 1
-        verbButton.layer.cornerRadius = 18
-        verbButton.layer.borderColor = UIColor.black.cgColor
-        verbButton.backgroundColor = UIColor.white
-        verbButton.titleLabel?.textColor = UIColor.black
-        
-        nounButton.layer.borderWidth = 1
-        nounButton.layer.cornerRadius = 20
-        nounButton.layer.borderColor = UIColor.black.cgColor
-        nounButton.backgroundColor = UIColor.white
-        nounButton.titleLabel?.textColor = UIColor.black
-        
-        adjButton.layer.borderWidth = 1
-        adjButton.layer.cornerRadius = 18
-        adjButton.layer.borderColor = UIColor.black.cgColor
-        adjButton.backgroundColor = UIColor.white
-        adjButton.titleLabel?.textColor = UIColor.black
-        
-        adverbButton.layer.borderWidth = 1
-        adverbButton.layer.cornerRadius = 20
-        adverbButton.layer.borderColor = UIColor.black.cgColor
-        adverbButton.backgroundColor = UIColor.white
-        adverbButton.titleLabel?.textColor = UIColor.black
-        
-        verbButton.isHighlighted = false
-        nounButton.isHighlighted = false
-        adjButton.isHighlighted = false
-        adverbButton.isHighlighted = false
-        disableAllButtons()
-    }
-    
     func updateButtonStates() {
-        guard isDataLoaded else {
+        guard viewModel.getIsDataLoaded() else {
             disableAllButtons()
             return
         }
-        nounButton.isEnabled = selectedFilter != "Noun" && !nounArray.isEmpty
-        verbButton.isEnabled = selectedFilter != "Verb" && !verbArray.isEmpty
-        adjButton.isEnabled = selectedFilter != "Adjective" && !adjArray.isEmpty
-        adverbButton.isEnabled = selectedFilter != "Adverb" && !adverbArray.isEmpty
+        nounButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Noun") == nil && !viewModel.getNounArray().isEmpty
+        verbButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Verb") == nil && !viewModel.getVerbArray().isEmpty
+        adjButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adjective") == nil && !viewModel.getAdjArray().isEmpty
+        adverbButton.isEnabled = viewModel.getSelectedFilters().firstIndex(of: "Adverb") == nil && !viewModel.getAdverbArray().isEmpty
     }
-    func disableAllButtons() {
-        nounButton.isEnabled = false
-        verbButton.isEnabled = false
-        adjButton.isEnabled = false
-        adverbButton.isEnabled = false
-    }
+    
     
     func updateButtonAppearance(_ button: UIButton) {
         let isEnabled = button.isEnabled
@@ -363,21 +208,18 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if synArray.count <= 5 {
-            return synArray.count
-        } else {
-            return 5
-        }
+        viewModel.numberOfSyns
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SynCollectionViewCell.identifier, for: indexPath) as! SynCollectionViewCell
         
-        if indexPath.row < synArray.count {
-            let syn = synArray[indexPath.row]
+        let syns = viewModel.getSynArray
+        if indexPath.row < syns!.count {
+            let syn = syns![indexPath.row]
             cell.setup(syn: syn.word!)
         } else {
-            navigationController?.popViewController(animated: true)// Or any other placeholder value
+            navigationController?.popViewController(animated: true)
         }
         return cell
     }
@@ -386,66 +228,15 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
 extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return selectedFilters.isEmpty ? sections.count : selectedFilters.count
+        return viewModel.getSelectedFilters().isEmpty ? viewModel.getSections().count : viewModel.getSelectedFilters().count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if selectedFilters.isEmpty {
-            return getDefinitionsForSection(section).count
+        if viewModel.getSelectedFilters().isEmpty {
+            return viewModel.getDefinitionsForSection(section).count
         } else {
-            let filter = selectedFilters[section]
-            return getDefinitionsForFilter(filter).definitions.count
-        }
-    }
-    
-    private func getDefinitionsForSection(_ section: Int) -> [Definition] {
-        switch section {
-        case 0:
-            return nounArray
-        case 1:
-            return verbArray
-        case 2:
-            return adjArray
-        case 3:
-            return adverbArray
-        default:
-            return []
-        }
-    }
-    private func getPartOfSpeechForSection(_ section: Int) -> String {
-        switch section {
-        case 0:
-            return "Noun"
-        case 1:
-            return "Verb"
-        case 2:
-            return "Adjective"
-        case 3:
-            return "Adverb"
-        default:
-            return "-"
-        }
-    }
-    
-    
-    private func getDefinitionsForFilter(_ filter: String) -> (definitions: [Definition], partOfSpeech: String) {
-        var partOfSpeech: String = ""
-        
-        switch filter {
-        case "Noun":
-            partOfSpeech = "Noun"
-            return (definitions: nounArray, partOfSpeech: partOfSpeech)
-        case "Verb":
-            partOfSpeech = "Verb"
-            return (definitions: verbArray, partOfSpeech: partOfSpeech)
-        case "Adjective":
-            partOfSpeech = "Adjective"
-            return (definitions: adjArray, partOfSpeech: partOfSpeech)
-        case "Adverb":
-            partOfSpeech = "Adverb"
-            return (definitions: adverbArray, partOfSpeech: partOfSpeech)
-        default:
-            return (definitions: [], partOfSpeech: "")
+            let filter = viewModel.getSelectedFilters()[section]
+            return viewModel.getDefinitionsForFilter(filter).definitions.count
         }
     }
     
@@ -454,12 +245,12 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         
         var partOfSpeech = ""
         let definitions: [Definition]
-        if selectedFilters.isEmpty {
-            definitions = getDefinitionsForSection(indexPath.section)
-            partOfSpeech = getPartOfSpeechForSection(indexPath.section)
+        if viewModel.getSelectedFilters().isEmpty {
+            definitions = viewModel.getDefinitionsForSection(indexPath.section)
+            partOfSpeech = viewModel.getPartOfSpeechForSection(indexPath.section)
         } else {
-            let filter = selectedFilters[indexPath.section]
-            let result = getDefinitionsForFilter(filter)
+            let filter = viewModel.getSelectedFilters()[indexPath.section]
+            let result = viewModel.getDefinitionsForFilter(filter)
             definitions = result.definitions
             partOfSpeech = result.partOfSpeech
         }
@@ -486,10 +277,10 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
         let titleLabel = UILabel(frame: CGRect(x: 16, y: 12, width: headerView.frame.width - 32, height: headerView.frame.height - 24))
         
         let sectionTitle: String
-        if selectedFilters.isEmpty {
-            sectionTitle = sections[section]
+        if viewModel.getSelectedFilters().isEmpty {
+            sectionTitle = viewModel.getSections()[section]
         } else {
-            sectionTitle = selectedFilters[section]
+            sectionTitle = viewModel.getSelectedFilters()[section]
         }
         
         titleLabel.text = sectionTitle

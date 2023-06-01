@@ -59,7 +59,6 @@ extension SearchViewModel: SearchViewModelProtocol {
         let request: NSFetchRequest<History> = History.fetchRequest()
         do {
             searchHistory = try context.fetch(request)
-            //tableView.reloadData()
         } catch {
             print(error)
         }
