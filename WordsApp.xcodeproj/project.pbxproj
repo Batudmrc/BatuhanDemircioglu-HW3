@@ -16,6 +16,7 @@
 		3B1273D12A20C92B00154FD1 /* NetworkPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 3B1273D02A20C92B00154FD1 /* NetworkPackage */; };
 		3B1273D32A20CA5500154FD1 /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1273D22A20CA5500154FD1 /* Word.swift */; };
 		3B1273D52A20CF8E00154FD1 /* Synonym.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1273D42A20CF8E00154FD1 /* Synonym.swift */; };
+		3B577B692A28CB49001EC33E /* ConnectionCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B577B682A28CB49001EC33E /* ConnectionCheck.swift */; };
 		3B81BA8C2A249AFD0064CDBE /* MeaningsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B81BA8A2A249AFD0064CDBE /* MeaningsTableViewCell.swift */; };
 		3B81BA8D2A249AFD0064CDBE /* MeaningsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B81BA8B2A249AFD0064CDBE /* MeaningsTableViewCell.xib */; };
 		3BB7558A2A276BFA005CF42B /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3BB755882A276BFA005CF42B /* DataModel.xcdatamodeld */; };
@@ -45,6 +46,7 @@
 		3B1273CE2A20C2ED00154FD1 /* NetworkPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NetworkPackage; sourceTree = "<group>"; };
 		3B1273D22A20CA5500154FD1 /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		3B1273D42A20CF8E00154FD1 /* Synonym.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synonym.swift; sourceTree = "<group>"; };
+		3B577B682A28CB49001EC33E /* ConnectionCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionCheck.swift; sourceTree = "<group>"; };
 		3B81BA8A2A249AFD0064CDBE /* MeaningsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeaningsTableViewCell.swift; sourceTree = "<group>"; };
 		3B81BA8B2A249AFD0064CDBE /* MeaningsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MeaningsTableViewCell.xib; sourceTree = "<group>"; };
 		3BB755892A276BFA005CF42B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 		3B1273B32A20BEF400154FD1 /* WordsApp */ = {
 			isa = PBXGroup;
 			children = (
+				3B577B672A28CB35001EC33E /* Utils */,
 				3BD7381E2A27C988002624A1 /* Extension */,
 				3B1273CB2A20C03A00154FD1 /* Storyboards */,
 				3B1273CA2A20C01100154FD1 /* Cells */,
@@ -169,6 +172,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3B577B672A28CB35001EC33E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3B577B682A28CB49001EC33E /* ConnectionCheck.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		3B81BA882A2499FC0064CDBE /* Synonym */ = {
@@ -309,6 +320,7 @@
 				3BD7382A2A27E274002624A1 /* DetailPage+UITableView.swift in Sources */,
 				3BDAA4732A236DAF00B66847 /* SynCollectionViewCell.swift in Sources */,
 				3BD7382C2A27F0AC002624A1 /* DetailPage+UISetup.swift in Sources */,
+				3B577B692A28CB49001EC33E /* ConnectionCheck.swift in Sources */,
 				3BD10C712A21FFE800AE715E /* RecentSearchTableViewCell.swift in Sources */,
 				3B1273D52A20CF8E00154FD1 /* Synonym.swift in Sources */,
 				3BD738232A27CE51002624A1 /* SearchView+UISetup.swift in Sources */,

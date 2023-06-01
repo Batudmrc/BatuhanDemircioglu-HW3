@@ -32,11 +32,15 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate, UISe
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? RecentSearchTableViewCell {
-            let text = cell.searchLabel.text
-            searchText = text
-            viewModel.checkData(word: text!)
+            if viewModel.isConnected() {
+                let text = cell.searchLabel.text
+                searchText = text
+                viewModel.checkData(word: text!)
+            } else {
+                viewModel.delegate?.showErrorMessage(title: "Error", message: "Please check your connection")
+            }
         }
     }
-
-
+    
+    
 }

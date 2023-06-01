@@ -16,6 +16,7 @@ protocol SearchViewModelProtocol {
     func saveHistory(word: String, context: NSManagedObjectContext)
     func getSearchHistory() -> [History]
     func loadHistory(context: NSManagedObjectContext)
+    func isConnected() -> Bool
 }
 
 protocol SearchViewModelDelegate: AnyObject {
@@ -31,7 +32,7 @@ final class SearchViewModel {
     var service: NetworkManagerProtocol?
     var context: NSManagedObjectContext?
     private var searchHistory: [History] = []
-    
+    // Check if the written word has a response, if it has navigate user to the detail view
     func checkWrittenWord(word: String) {
         self.delegate?.showLoading()
         NetworkManager.shared.getWord(word: word) { [weak self] (result: Result<[WordElement], Error>) in
@@ -54,6 +55,7 @@ final class SearchViewModel {
 }
 
 extension SearchViewModel: SearchViewModelProtocol {
+    // Load search history from Core Data and reload the table view.
     func loadHistory(context: NSManagedObjectContext) {
         let request: NSFetchRequest<History> = History.fetchRequest()
         do {
@@ -63,10 +65,14 @@ extension SearchViewModel: SearchViewModelProtocol {
         }
     }
     
+    func isConnected() -> Bool {
+        return NetworkUtility.checkNetworkConnectivity()
+    }
+    
     func getSearchHistory() -> [History] {
         return searchHistory
     }
-    
+    // Save searchHistory to the CoreData
     func saveHistory(word: String, context: NSManagedObjectContext) {
         let newHistory = History(context: context)
         newHistory.word = word
@@ -88,7 +94,6 @@ extension SearchViewModel: SearchViewModelProtocol {
     }
     
     func checkData(word: String) {
-        
         checkWrittenWord(word: word)
     }
 }

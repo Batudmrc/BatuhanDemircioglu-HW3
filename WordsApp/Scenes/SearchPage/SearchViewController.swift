@@ -14,7 +14,6 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchBar: UISearchBar!
     var originalButtonFrame: CGRect!
-    var searchHistory = [History]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let activityIndicator = UIActivityIndicatorView(style: .large)
     var searchText: String?
@@ -32,6 +31,9 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NetworkUtils.checkConnection(in: self) {
+            NetworkUtils.retryButtonTapped(in: self)
+        }
         viewModel.delegate = self
         setupUI()
         viewModel.loadHistory(context: context)
@@ -42,9 +44,14 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
             viewModel.delegate?.showErrorMessage(title: "Empty Search", message: "Please enter a word to search.")
             return
         }
-        searchText = text
-        viewModel.saveHistory(word: text, context: context)
-        viewModel.checkData(word: text)
+        if viewModel.isConnected() {
+            searchText = text
+            viewModel.saveHistory(word: text, context: context)
+            viewModel.checkData(word: text)
+        } else {
+            viewModel.delegate?.showErrorMessage(title: "Error", message: "Please check your connection")
+        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -57,16 +64,6 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
 }
 
 extension SearchViewController: SearchViewModelDelegate {
-    func loadHistory() {
-        let request: NSFetchRequest<History> = History.fetchRequest()
-        do {
-            searchHistory = try context.fetch(request)
-            tableView.reloadData()
-        } catch {
-            print(error)
-        }
-    }
-    
     func reloadData() {
         tableView.reloadData()
     }
@@ -117,7 +114,7 @@ extension SearchViewController: SearchViewModelDelegate {
             }
         }
     }
-
+    
 }
 
 

@@ -102,7 +102,7 @@ final class DetailViewModel {
     }
 }
 
-extension DetailViewModel: DetailViewModelProtocol {
+extension DetailViewModel: DetailViewModelProtocol {    
     func getIsDataLoaded() -> Bool {
         return isDataLoaded
     }
@@ -207,7 +207,7 @@ extension DetailViewModel: DetailViewModelProtocol {
             return 5
         }
     }
-    
+
     func playPronunciationAudio() {
         guard let wordArray = wordArray else {
             return
@@ -236,7 +236,7 @@ extension DetailViewModel: DetailViewModelProtocol {
     func fetchSynData(word: String) {
         fetchSyn(word: word)
     }
-    
+    // Put definitions to related array as their partOfSpeech
     func processMeanings() {
         nounArray.removeAll()
         verbArray.removeAll()

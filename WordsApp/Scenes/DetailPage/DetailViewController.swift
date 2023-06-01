@@ -29,6 +29,9 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NetworkUtils.checkConnection(in: self) {
+            NetworkUtils.retryButtonTapped(in: self)
+        }
         fetchData()
         setupUI()
     }
