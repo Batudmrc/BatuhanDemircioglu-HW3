@@ -66,11 +66,22 @@ final class DetailViewModel {
                 self?.wordArray = wordArray
                 self?.processMeanings()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: wordArray[0].phonetic ?? "no phonetics found")
+                    if wordArray[0].phonetics!.isEmpty {
+                        // Handle the case when phonetics array is empty
+                        self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: "No phonetics found")
+                    } else if let phonetic = wordArray[0].phonetic {
+                        self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: phonetic)
+                    } else if let phonetic = wordArray[0].phonetics![1].text {
+                        self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: phonetic)
+                    } else {
+                        self?.delegate?.updateLabels(wordText: word.capitalized, phoneticText: "No phonetics found")
+                    }
                     self?.onDataLoaded()
                     self?.delegate?.reloadTableViewData()
                     self?.delegate?.hideLoading() // Hide loading animation after a slight delay
                 }
+
+
             case .failure(let error):
                 print("Word API Failure:", error)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

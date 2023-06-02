@@ -42,7 +42,6 @@ class SearchViewController: UIViewController, NSFetchedResultsControllerDelegate
         
     }
     
-    
     func checkConnection() {
         NetworkUtils.checkConnection(in: self) {
             NetworkUtils.retryButtonTapped(in: self)

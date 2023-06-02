@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+
 extension SearchViewController {
     func changeObserverStatus() {
         NotificationCenter.default.addObserver(
