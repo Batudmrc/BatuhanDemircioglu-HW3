@@ -5,6 +5,7 @@ WordsApp is a simple iOS application that allows users to search for words and v
 ## Features
 
 - **Word Search**: Enter a word in the search bar to retrieve its definitions and related information.
+- **MVVM Architecture**: MVVM is an iOS architecture that separates UI (View) from data and logic (Model) using a ViewModel. It promotes modular code, testability, and reactive UI updates.
 - **Definition Display**: View the definitions of the searched word, including part of speech, meaning, and example usage.
 - **Pronunciation**: If available, WordsApp provides the pronunciation of the searched word to assist with correct pronunciation.
 - **Search History**: WordsApp keeps track of your search history, allowing you to easily revisit previous searches.
@@ -12,7 +13,8 @@ WordsApp is a simple iOS application that allows users to search for words and v
 - **Connection Check**: WordsApp verifies network connectivity using the NetworkPackage library, ensuring a stable internet connection before initiating API requests.
 - **Smooth Animations**: Enjoy a seamless and visually pleasing experience with smooth animations throughout the app.
 - **Modular and Generic Network Layer**: WordsApp utilizes a modular and generic network layer to handle API integration, providing flexibility, reusability, and maintainability.
-- **NetworkPackage Integration**: WordsApp integrates the NetworkPackage library for efficient and streamlined network communication, making API calls and data retrieval seamless.
+- **Well Organized Folder Structure**: WordsApp follows a concise and logical organization of files and folders. This structure promotes code readability, modularity, and maintainability.
+- **No Third Party Packages Used**: WordsApp does not use any third-party packages, relying solely on native iOS frameworks for its functionality. This approach ensures a streamlined and self-contained application.
 
 ## Screen Records
 
