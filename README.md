@@ -7,6 +7,7 @@ WordsApp is a simple iOS application that allows users to search for words and v
 - **Word Search**: Enter a word in the search bar to retrieve its definitions and related information.
 - **MVVM Architecture**: MVVM is an iOS architecture that separates UI (View) from data and logic (Model) using a ViewModel. It promotes modular code, testability, and reactive UI updates.
 - **Definition Display**: View the definitions of the searched word, including part of speech, meaning, and example usage.
+- **Synonym Word**: WordsApp displays synonyms for searched words, offering users alternative word choices with similar meanings. This feature enhances vocabulary and helps users express ideas more creatively.
 - **Pronunciation**: If available, WordsApp provides the pronunciation of the searched word to assist with correct pronunciation.
 - **Search History**: WordsApp keeps track of your search history, allowing you to easily revisit previous searches.
 - **Error Handling**: WordsApp includes robust error handling to enhance user experience and provide helpful feedback.
